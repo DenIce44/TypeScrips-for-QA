@@ -17,3 +17,9 @@
 npx tsx src/01-basics.ts
 npx tsx src/02-products.ts
 ```
+
+## Проверка типов
+
+```bash
+npx tsc --noEmit
+```
