@@ -40,7 +40,7 @@ const allProducts = products.map((product) => ({
 }));
 const productByName = products.find((product) => product.name === "Keyboard");
 const productsOver5000 = products.filter((product) => product.price > 5000);
-const productUnavailable = products.find((product) => !product.available);
+const hasUnavailableProduct = products.some((product) => !product.available);
 const availableProductTotalPriceSum = availableProducts.reduce(
   (total, product) => total + product.price,
   0,
@@ -49,7 +49,7 @@ console.log(availableProducts);
 console.log(allProducts);
 console.log(productByName);
 console.log(productsOver5000);
-console.log(productUnavailable);
+console.log(`Has unavailable product: ${hasUnavailableProduct}`);
 console.log(
   `Total price of available products: ${availableProductTotalPriceSum}`,
 );
