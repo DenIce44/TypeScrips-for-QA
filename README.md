@@ -10,16 +10,50 @@
 - Массивы
 - Функции
 - Методы filter, find, some и reduce
+- Асинхронные функции и Promise
+- Последовательное и параллельное выполнение
+- HTTP-запросы через Fetch API
+- Обработка ошибок через try/catch
+- Первые браузерные тесты Playwright
 
 ## Запуск примеров
 
 ```bash
 npx tsx src/01-basics.ts
 npx tsx src/02-products.ts
+npx tsx src/03-async.ts
+npx tsx src/04-http.ts
+npx tsx src/05-posts.ts
 ```
 
 ## Проверка типов
 
 ```bash
 npx tsc --noEmit
+```
+
+## Запуск Playwright-тестов
+
+Все тесты:
+
+```bash
+npm test
+```
+
+Тесты только в Chromium:
+
+```bash
+npm run test:chromium
+```
+
+Запуск с видимым браузером:
+
+```bash
+npm run test:headed
+```
+
+UI Mode:
+
+```bash
+npm run test:ui
 ```
