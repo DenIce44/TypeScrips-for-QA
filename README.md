@@ -22,6 +22,12 @@
 - Hooks beforeEach
 - Изоляция browser context
 - Фильтрация локаторов
+- Page Object Model
+- Типизация Page и Locator
+- Переиспользуемые компоненты страниц
+- Пользовательские Playwright fixtures
+- Разделение тестовых данных и тестовой логики
+- Рефакторинг UI-тестов
 
 ## Запуск примеров
 
@@ -90,3 +96,16 @@ Debug Mode:
 ```bash
 npm run test:debug
 ```
+
+## Архитектура UI-тестов
+
+```text
+components/  — переиспользуемые элементы интерфейса
+fixtures/    — подготовка объектов для тестов
+pages/       — Page Objects
+test-data/   — тестовые данные
+tests/       — сценарии и assertions
+```
+
+Page Objects содержат локаторы и пользовательские действия.  
+Assertions остаются в тестовых сценариях.
