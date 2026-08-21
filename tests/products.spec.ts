@@ -1,50 +1,68 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../fixtures/app.fixture.js";
+import { users } from "../test-data/users.js";
 
 test.describe("Products", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+  test.beforeEach(async ({ page, loginPage }) => {
+    await loginPage.open();
 
-    await page.getByTestId("username").fill("standard_user");
-    await page.getByTestId("password").fill("secret_sauce");
-    await page.getByRole("button", { name: "Login" }).click();
+    await loginPage.login(users.standard.username, users.standard.password);
 
     await expect(page).toHaveURL(/inventory\.html/);
   });
 
-  test("products page displays the catalog", async ({ page }) => {
-    await expect(page.getByTestId("title")).toHaveText("Products");
-    await expect(page.getByTestId("inventory-list")).toBeVisible();
-
-    const products = page.getByTestId("inventory-item");
-
-    await expect(products).toHaveCount(6);
+  test("products page displays the catalog", async ({ productsPage }) => {
+    await expect(productsPage.inventoryList).toBeVisible();
+    await expect(productsPage.products).toHaveCount(6);
   });
 
-  test("user can add Sauce Labs Backpack to the cart", async ({ page }) => {
-    const backpack = page
-      .getByTestId("inventory-item")
-      .filter({ hasText: "Sauce Labs Backpack" });
+  test("user can add Sauce Labs Backpack to the cart", async ({
+    page,
+    cartPage,
+    header,
+    productsPage,
+  }) => {
+    const productName = "Sauce Labs Backpack";
+    const backpack = productsPage.productByName(productName);
 
     await expect(backpack).toHaveCount(1);
 
-    await backpack.getByRole("button", { name: "Add to cart" }).click();
+    await productsPage.addProductToCart(productName);
 
-    await expect(page.getByTestId("shopping-cart-badge")).toHaveText("1");
+    await expect(header.cartBadge).toHaveText("1");
 
-    await page.getByTestId("shopping-cart-link").click();
+    await header.openCart();
 
     await expect(page).toHaveURL(/cart\.html/);
 
-    await expect(page.getByTestId("inventory-item-name")).toHaveText(
-      "Sauce Labs Backpack",
-    );
+    await expect(cartPage.cartItems).toHaveCount(1);
   });
 
-  test("cart is empty at the beginning of a new test", async ({ page }) => {
-    await expect(page.getByTestId("shopping-cart-badge")).not.toBeVisible();
+  test("cart is empty at the beginning of a new test", async ({
+    page,
+    header,
+  }) => {
+    await expect(header.cartBadge).not.toBeVisible();
 
-    await page.getByTestId("shopping-cart-link").click();
+    await header.openCart();
 
     await expect(page.getByTestId("inventory-item")).toHaveCount(0);
+  });
+
+  test("user can remove a product from the cart", async ({
+    cartPage,
+    header,
+    productsPage,
+  }) => {
+    const productName = "Sauce Labs Backpack";
+
+    await productsPage.addProductToCart(productName);
+    await header.openCart();
+
+    await expect(cartPage.itemByName(productName)).toHaveCount(1);
+
+    await cartPage.removeProduct(productName);
+
+    await expect(cartPage.itemByName(productName)).toHaveCount(0);
+    await expect(header.cartBadge).not.toBeVisible();
   });
 });
