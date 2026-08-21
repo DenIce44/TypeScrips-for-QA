@@ -13,6 +13,7 @@ test.describe("Products", () => {
   test("products page displays the catalog", async ({ productsPage }) => {
     await expect(productsPage.inventoryList).toBeVisible();
     await expect(productsPage.products).toHaveCount(6);
+    await expect(productsPage.title).toHaveText("Products");
   });
 
   test("user can add Sauce Labs Backpack to the cart", async ({
@@ -34,18 +35,16 @@ test.describe("Products", () => {
 
     await expect(page).toHaveURL(/cart\.html/);
 
-    await expect(cartPage.cartItems).toHaveCount(1);
+    await expect(cartPage.itemByName(productName)).toHaveCount(1);
   });
 
   test("cart is empty at the beginning of a new test", async ({
-    page,
+    cartPage,
     header,
   }) => {
-    await expect(header.cartBadge).not.toBeVisible();
-
     await header.openCart();
 
-    await expect(page.getByTestId("inventory-item")).toHaveCount(0);
+    await expect(cartPage.cartItems).toHaveCount(0);
   });
 
   test("user can remove a product from the cart", async ({

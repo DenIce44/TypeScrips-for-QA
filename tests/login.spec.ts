@@ -6,14 +6,22 @@ test.describe("Login", () => {
     await loginPage.open();
   });
 
-  test("standard user can log in", async ({ page, loginPage }) => {
+  test("standard user can log in", async ({
+    page,
+    loginPage,
+    productsPage,
+  }) => {
     await loginPage.login(users.standard.username, users.standard.password);
 
     await expect(page).toHaveURL(/inventory\.html/);
-    await expect(page.getByTestId("title")).toHaveText("Products");
+    await expect(productsPage.title).toHaveText("Products");
   });
 
-  test("locked user cannot log in", async ({ page, loginPage }) => {
+  test("locked user cannot log in", async ({
+    page,
+    loginPage,
+    productsPage,
+  }) => {
     await loginPage.login(users.locked.username, users.locked.password);
 
     await expect(page).toHaveURL("https://www.saucedemo.com/");
@@ -22,7 +30,7 @@ test.describe("Login", () => {
       "Epic sadface: Sorry, this user has been locked out.",
     );
 
-    await expect(page.getByTestId("title")).not.toBeVisible();
+    await expect(productsPage.title).not.toBeVisible();
   });
 
   test("username is required", async ({ loginPage }) => {
