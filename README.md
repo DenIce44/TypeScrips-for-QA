@@ -15,6 +15,13 @@
 - HTTP-запросы через Fetch API
 - Обработка ошибок через try/catch
 - Первые браузерные тесты Playwright
+- Устойчивые локаторы Playwright
+- Web-first assertions
+- Позитивные и негативные UI-тесты
+- Параметризация тестов
+- Hooks beforeEach
+- Изоляция browser context
+- Фильтрация локаторов
 
 ## Запуск примеров
 
@@ -56,4 +63,30 @@ UI Mode:
 
 ```bash
 npm run test:ui
+```
+
+## Учебное приложение
+
+UI-тесты выполняются на:
+
+https://www.saucedemo.com/
+
+## Наборы UI-тестов
+
+Авторизация:
+
+```bash
+npm run test:login
+```
+
+Каталог и корзина:
+
+```bash
+npm run test:products
+```
+
+Debug Mode:
+
+```bash
+npm run test:debug
 ```
