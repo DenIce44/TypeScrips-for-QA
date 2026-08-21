@@ -21,6 +21,9 @@
 ```bash
 npx tsx src/01-basics.ts
 npx tsx src/02-products.ts
+npx tsx src/03-async.ts
+npx tsx src/04-http.ts
+npx tsx src/05-posts.ts
 ```
 
 ## Проверка типов
