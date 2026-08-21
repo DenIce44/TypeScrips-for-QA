@@ -5,11 +5,15 @@ const invalidCredentials = [
     caseName: "unknown username",
     username: "unknown_user",
     password: "secret_sauce",
+    expectedError:
+      "Epic sadface: Username and password do not match any user in this service",
   },
   {
     caseName: "incorrect password",
     username: "standard_user",
     password: "incorrect_password",
+    expectedError:
+      "Epic sadface: Username and password do not match any user in this service",
   },
 ];
 
@@ -68,7 +72,9 @@ test.describe("Login", () => {
       await page.getByTestId("password").fill(credentials.password);
       await page.getByRole("button", { name: "Login" }).click();
 
-      await expect(page.getByTestId("error")).toBeVisible();
+      await expect(page.getByTestId("error")).toHaveText(
+        credentials.expectedError,
+      );
       await expect(page).toHaveURL("https://www.saucedemo.com/");
     });
   }
