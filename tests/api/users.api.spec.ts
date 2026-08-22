@@ -1,5 +1,31 @@
 import { test, expect } from "../../fixtures/api.fixture.js";
+import type { UsersResponse } from "../../types/api.types.js";
+import { newUser } from "../../test-data/api-users.js";
 
+test("returns a list of users", async ({ usersApi }) => {
+  const response = await usersApi.getUsers(2);
+
+  expect(response.status()).toBe(200);
+  expect(response.ok()).toBeTruthy();
+
+  const responseBody: UsersResponse = await response.json();
+
+  expect(responseBody.page).toBe(2);
+  expect(responseBody.data).not.toHaveLength(0);
+
+  for (const user of responseBody.data) {
+    expect(user).toMatchObject({
+      id: expect.any(Number),
+      email: expect.any(String),
+      first_name: expect.any(String),
+      last_name: expect.any(String),
+      avatar: expect.any(String),
+    });
+
+    expect(user.email).toContain("@");
+    expect(user.avatar).toMatch(/^https:\/\//);
+  }
+});
 test.describe("Users API", () => {
   test("returns a user by ID using API client", async ({ usersApi }) => {
     const response = await usersApi.getUser(2);
@@ -11,8 +37,8 @@ test.describe("Users API", () => {
     expect(responseBody.data.id).toBe(2);
   });
 
-  test("returns complete user information", async ({ request }) => {
-    const response = await request.get("/api/users/2");
+  test("returns complete user information", async ({ usersApi }) => {
+    const response = await usersApi.getUser(999);
 
     expect(response.status()).toBe(200);
     expect(response.ok()).toBeTruthy();
@@ -44,34 +70,27 @@ test.describe("Users API", () => {
     expect(responseBody).toEqual({});
   });
 
-  test("creates a new user", async ({ request }) => {
-    const userData = {
-      name: "Denis",
-      job: "QA Engineer",
-    };
-
-    const response = await request.post("/api/users", {
-      data: userData,
-    });
+  test("creates a new user", async ({ usersApi }) => {
+    const response = await usersApi.createUser(newUser);
 
     expect(response.status()).toBe(201);
 
     const responseBody = await response.json();
 
-    expect(responseBody).toMatchObject(userData);
+    expect(responseBody).toMatchObject(
+      newUser as unknown as Record<string, unknown>,
+    );
     expect(responseBody.id).toEqual(expect.any(String));
     expect(responseBody.createdAt).toEqual(expect.any(String));
   });
 
-  test("updates an existing user", async ({ request }) => {
+  test("updates an existing user", async ({ usersApi }) => {
     const updatedUser = {
       name: "Denis",
       job: "Senior QA Engineer",
     };
 
-    const response = await request.put("/api/users/2", {
-      data: updatedUser,
-    });
+    const response = await usersApi.updateUser(2, updatedUser);
 
     expect(response.status()).toBe(200);
 
