@@ -1,89 +1,66 @@
 import { test, expect } from "../../fixtures/api.fixture.js";
 
-import type { UsersResponse } from "../../types/api.types.js";
+import type {
+  CreateUserResponse,
+  User,
+  UsersResponse,
+} from "../../types/api.types.js";
 
 import { newUser } from "../../test-data/api-users.js";
 
-test("returns a list of users", async ({
-  usersApi,
-}: {
-  usersApi: {
-    getUsers(page: number): Promise<{
-      status(): number;
-      ok(): boolean;
-      json(): Promise<UsersResponse>;
-    }>;
-  };
-}) => {
-  const response = await usersApi.getUsers(2);
+type UserResponse = {
+  data: User;
+};
 
-  expect(response.status()).toBe(200);
-  expect(response.ok()).toBeTruthy();
+type UpdateUserResponse = {
+  name: string;
+  job: string;
+  updatedAt: string;
+};
 
-  const responseBody: UsersResponse = await response.json();
-
-  expect(responseBody.page).toBe(2);
-  expect(responseBody.data).not.toHaveLength(0);
-
-  for (const user of responseBody.data) {
-    expect(user).toMatchObject({
-      id: expect.any(Number),
-      email: expect.any(String),
-      first_name: expect.any(String),
-      last_name: expect.any(String),
-      avatar: expect.any(String),
-    });
-
-    expect(user.email).toContain("@");
-    expect(user.avatar).toMatch(/^https:\/\//);
-  }
-});
 test.describe("Users API", () => {
-  test("returns a user by ID using API client", async ({
-    usersApi,
-  }: {
-    usersApi: {
-      getUser(id: number): Promise<{
-        status(): number;
-        json(): Promise<unknown>;
-      }>;
-    };
-  }) => {
+  test("returns a list of users", async ({ usersApi }) => {
+    const response = await usersApi.getUsers(2);
+
+    expect(response.status()).toBe(200);
+    expect(response.ok()).toBeTruthy();
+
+    const responseBody: UsersResponse = await response.json();
+
+    expect(responseBody.page).toBe(2);
+    expect(responseBody.data).not.toHaveLength(0);
+
+    for (const user of responseBody.data) {
+      expect(user).toMatchObject({
+        id: expect.any(Number),
+        email: expect.any(String),
+        first_name: expect.any(String),
+        last_name: expect.any(String),
+        avatar: expect.any(String),
+      });
+
+      expect(user.email).toContain("@");
+      expect(user.avatar).toMatch(/^https:\/\//);
+    }
+  });
+
+  test("returns a user by ID using API client", async ({ usersApi }) => {
     const response = await usersApi.getUser(2);
 
     expect(response.status()).toBe(200);
 
-    const responseBody = (await response.json()) as { data: { id: number } };
+    const responseBody: UserResponse = await response.json();
 
     expect(responseBody.data.id).toBe(2);
   });
 
-  test("returns complete user information", async ({
-    usersApi,
-  }: {
-    usersApi: {
-      getUser(id: number): Promise<{
-        status(): number;
-        ok(): boolean;
-        json(): Promise<{
-          data: {
-            id: number;
-            email: string;
-            first_name: string;
-            last_name: string;
-            avatar: string;
-          };
-        }>;
-        headers(): { [key: string]: string };
-      }>;
-    };
-  }) => {
+  test("returns complete user information", async ({ usersApi }) => {
     const response = await usersApi.getUser(2);
 
     expect(response.status()).toBe(200);
     expect(response.ok()).toBeTruthy();
 
-    const responseBody = await response.json();
+    const responseBody: UserResponse = await response.json();
 
     expect(responseBody.data).toMatchObject({
       id: 2,
@@ -95,7 +72,6 @@ test.describe("Users API", () => {
 
     expect(responseBody.data.email).toContain("@");
     expect(responseBody.data.avatar).toMatch(/^https:\/\//);
-
     expect(response.headers()["content-type"]).toContain("application/json");
   });
 
@@ -105,51 +81,25 @@ test.describe("Users API", () => {
     expect(response.status()).toBe(404);
     expect(response.ok()).toBeFalsy();
 
-    const responseBody = await response.json();
+    const responseBody: Record<string, never> = await response.json();
 
     expect(responseBody).toEqual({});
   });
 
-  test("creates a new user", async ({
-    usersApi,
-  }: {
-    usersApi: {
-      createUser(user: typeof newUser): Promise<{
-        status(): number;
-        json(): Promise<Record<string, unknown>>;
-      }>;
-    };
-  }) => {
+  test("creates a new user", async ({ usersApi }) => {
     const response = await usersApi.createUser(newUser);
 
     expect(response.status()).toBe(201);
 
-    const responseBody = await response.json();
+    const responseBody: CreateUserResponse = await response.json();
 
-    expect(responseBody).toMatchObject(
-      newUser as unknown as Record<string, unknown>,
-    );
+    expect(responseBody.name).toBe(newUser.name);
+    expect(responseBody.job).toBe(newUser.job);
     expect(responseBody.id).toEqual(expect.any(String));
     expect(responseBody.createdAt).toEqual(expect.any(String));
   });
 
-  test("updates an existing user", async ({
-    usersApi,
-  }: {
-    usersApi: {
-      updateUser(
-        id: number,
-        user: { name: string; job: string },
-      ): Promise<{
-        status(): number;
-        json(): Promise<{
-          name: string;
-          job: string;
-          updatedAt: string;
-        }>;
-      }>;
-    };
-  }) => {
+  test("updates an existing user", async ({ usersApi }) => {
     const updatedUser = {
       name: "Denis",
       job: "Senior QA Engineer",
@@ -159,11 +109,10 @@ test.describe("Users API", () => {
 
     expect(response.status()).toBe(200);
 
-    const responseBody = await response.json();
+    const responseBody: UpdateUserResponse = await response.json();
 
     expect(responseBody).toMatchObject(updatedUser);
     expect(responseBody.updatedAt).toEqual(expect.any(String));
-
     expect(Number.isNaN(Date.parse(responseBody.updatedAt))).toBeFalsy();
   });
 
