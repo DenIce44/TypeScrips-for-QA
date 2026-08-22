@@ -1,15 +1,19 @@
 import { test as base, expect } from "@playwright/test";
 
 import { Header } from "../components/Header.js";
+import { CartPage } from "../pages/CartPage.js";
+import { CheckoutCompletePage } from "../pages/CheckoutCompletePage.js";
+import { CheckoutPage } from "../pages/CheckoutPage.js";
 import { LoginPage } from "../pages/LoginPage.js";
 import { ProductsPage } from "../pages/ProductsPage.js";
-import { CartPage } from "../pages/CartPage.js";
 
 interface AppFixtures {
   header: Header;
   loginPage: LoginPage;
   productsPage: ProductsPage;
   cartPage: CartPage;
+  checkoutPage: CheckoutPage;
+  checkoutCompletePage: CheckoutCompletePage;
 }
 
 export const test = base.extend<AppFixtures>({
@@ -27,6 +31,14 @@ export const test = base.extend<AppFixtures>({
 
   cartPage: async ({ page }, use) => {
     await use(new CartPage(page));
+  },
+
+  checkoutPage: async ({ page }, use) => {
+    await use(new CheckoutPage(page));
+  },
+
+  checkoutCompletePage: async ({ page }, use) => {
+    await use(new CheckoutCompletePage(page));
   },
 });
 
