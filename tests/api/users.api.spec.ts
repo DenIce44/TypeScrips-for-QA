@@ -167,17 +167,8 @@ test.describe("Users API", () => {
     expect(Number.isNaN(Date.parse(responseBody.updatedAt))).toBeFalsy();
   });
 
-  test("deletes an existing user", async ({
-    request,
-  }: {
-    request: {
-      delete(path: string): Promise<{
-        status(): number;
-        text(): Promise<string>;
-      }>;
-    };
-  }) => {
-    const response = await request.delete("/api/users/2");
+  test("deletes an existing user", async ({ usersApi }) => {
+    const response = await usersApi.deleteUser(2);
 
     expect(response.status()).toBe(204);
 

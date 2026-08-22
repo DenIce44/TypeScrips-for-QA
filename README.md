@@ -135,6 +135,19 @@ npm run test:api
 ````env
 REQRES_API_KEY=your_api_key
 
-```md
+```
 Длинные end-to-end сценарии разделяются на бизнес-шаги с помощью `test.step()`, благодаря чему HTML-отчёт показывает точный этап выполнения или падения теста.
+
+## API-тесты
+
+API-тесты выполняются на ReqRes:
+
+```bash
+npm run test:api
 ````
+
+Для запуска необходимо создать файл `.env`:
+
+```env
+REQRES_API_KEY=your_api_key
+```
