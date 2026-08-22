@@ -1,8 +1,18 @@
-import { test, expect } from "../../fixtures/api.fixture.js";
-import type { UsersResponse } from "../../types/api.types.js";
-import { newUser } from "../../test-data/api-users.js";
+const { test, expect } = require("../../fixtures/api.fixture.js");
+type UsersResponse = import("../../types/api.types.js").UsersResponse;
+const { newUser } = require("../../test-data/api-users.js");
 
-test("returns a list of users", async ({ usersApi }) => {
+test("returns a list of users", async ({
+  usersApi,
+}: {
+  usersApi: {
+    getUsers(page: number): Promise<{
+      status(): number;
+      ok(): boolean;
+      json(): Promise<UsersResponse>;
+    }>;
+  };
+}) => {
   const response = await usersApi.getUsers(2);
 
   expect(response.status()).toBe(200);
@@ -27,17 +37,45 @@ test("returns a list of users", async ({ usersApi }) => {
   }
 });
 test.describe("Users API", () => {
-  test("returns a user by ID using API client", async ({ usersApi }) => {
+  test("returns a user by ID using API client", async ({
+    usersApi,
+  }: {
+    usersApi: {
+      getUser(id: number): Promise<{
+        status(): number;
+        json(): Promise<unknown>;
+      }>;
+    };
+  }) => {
     const response = await usersApi.getUser(2);
 
     expect(response.status()).toBe(200);
 
-    const responseBody = await response.json();
+    const responseBody = (await response.json()) as { data: { id: number } };
 
     expect(responseBody.data.id).toBe(2);
   });
 
-  test("returns complete user information", async ({ usersApi }) => {
+  test("returns complete user information", async ({
+    usersApi,
+  }: {
+    usersApi: {
+      getUser(id: number): Promise<{
+        status(): number;
+        ok(): boolean;
+        json(): Promise<{
+          data: {
+            id: number;
+            email: string;
+            first_name: string;
+            last_name: string;
+            avatar: string;
+          };
+        }>;
+        headers(): { [key: string]: string };
+      }>;
+    };
+  }) => {
     const response = await usersApi.getUser(999);
 
     expect(response.status()).toBe(200);
@@ -59,7 +97,17 @@ test.describe("Users API", () => {
     expect(response.headers()["content-type"]).toContain("application/json");
   });
 
-  test("returns 404 for a nonexistent user", async ({ request }) => {
+  test("returns 404 for a nonexistent user", async ({
+    request,
+  }: {
+    request: {
+      get(path: string): Promise<{
+        status(): number;
+        ok(): boolean;
+        json(): Promise<unknown>;
+      }>;
+    };
+  }) => {
     const response = await request.get("/api/users/999");
 
     expect(response.status()).toBe(404);
@@ -70,7 +118,16 @@ test.describe("Users API", () => {
     expect(responseBody).toEqual({});
   });
 
-  test("creates a new user", async ({ usersApi }) => {
+  test("creates a new user", async ({
+    usersApi,
+  }: {
+    usersApi: {
+      createUser(user: typeof newUser): Promise<{
+        status(): number;
+        json(): Promise<Record<string, unknown>>;
+      }>;
+    };
+  }) => {
     const response = await usersApi.createUser(newUser);
 
     expect(response.status()).toBe(201);
@@ -84,7 +141,23 @@ test.describe("Users API", () => {
     expect(responseBody.createdAt).toEqual(expect.any(String));
   });
 
-  test("updates an existing user", async ({ usersApi }) => {
+  test("updates an existing user", async ({
+    usersApi,
+  }: {
+    usersApi: {
+      updateUser(
+        id: number,
+        user: { name: string; job: string },
+      ): Promise<{
+        status(): number;
+        json(): Promise<{
+          name: string;
+          job: string;
+          updatedAt: string;
+        }>;
+      }>;
+    };
+  }) => {
     const updatedUser = {
       name: "Denis",
       job: "Senior QA Engineer",
@@ -102,7 +175,16 @@ test.describe("Users API", () => {
     expect(Number.isNaN(Date.parse(responseBody.updatedAt))).toBeFalsy();
   });
 
-  test("deletes an existing user", async ({ request }) => {
+    test("deletes an existing user", async ({
+      request,
+    }: {
+      request: {
+        delete(path: string): Promise<{
+          status(): number;
+          text(): Promise<string>;
+        }>;
+      };
+    }) => {
     const response = await request.delete("/api/users/2");
 
     expect(response.status()).toBe(204);
