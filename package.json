@@ -11,6 +11,7 @@
     "test:login": "playwright test tests/login.spec.ts --project=chromium",
     "test:products": "playwright test tests/products.spec.ts --project=chromium",
     "test:checkout": "playwright test tests/checkout.spec.ts --project=chromium",
+    "test:api": "playwright test --project=api",
     "test:debug": "playwright test --project=chromium --debug",
     "typecheck": "tsc --noEmit"
   },
