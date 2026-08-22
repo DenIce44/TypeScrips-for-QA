@@ -4,7 +4,7 @@ export interface CheckoutCustomer {
   postalCode: string;
 }
 
-export const checkoutCustomer: CheckoutCustomer = {
+export const checkoutCustomer = {
   firstName: "Dennis",
   lastName: "Ischuk",
   postalCode: "01001",

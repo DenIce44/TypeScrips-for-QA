@@ -125,4 +125,39 @@ test.describe("Checkout", () => {
 
     await expect(page).toHaveURL(/checkout-step-one\.html/);
   });
+
+  test("user can return to products after completing an order", async ({
+    page,
+    header,
+    productsPage,
+    cartPage,
+    checkoutPage,
+    checkoutCompletePage,
+  }) => {
+    const productName = "Sauce Labs Bike Light";
+
+    await productsPage.addProductToCart(productName);
+    await header.openCart();
+
+    await expect(cartPage.itemByName(productName)).toHaveCount(1);
+
+    await cartPage.proceedToCheckout();
+    await checkoutPage.fillCustomerInformation(checkoutCustomer);
+    await checkoutPage.continueCheckout();
+
+    await expect(page).toHaveURL(/checkout-step-two\.html/);
+
+    await checkoutPage.finishCheckout();
+
+    await expect(page).toHaveURL(/checkout-complete\.html/);
+    await expect(checkoutCompletePage.completeHeader).toHaveText(
+      "Thank you for your order!",
+    );
+
+    await checkoutCompletePage.returnToProducts();
+
+    await expect(page).toHaveURL(/inventory\.html/);
+    await expect(productsPage.title).toHaveText("Products");
+    await expect(header.cartBadge).not.toBeVisible();
+  });
 });
