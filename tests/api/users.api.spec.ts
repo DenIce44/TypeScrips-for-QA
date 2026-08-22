@@ -1,6 +1,8 @@
-const { test, expect } = require("../../fixtures/api.fixture.js");
-type UsersResponse = import("../../types/api.types.js").UsersResponse;
-const { newUser } = require("../../test-data/api-users.js");
+import { test, expect } from "../../fixtures/api.fixture.js";
+
+import type { UsersResponse } from "../../types/api.types.js";
+
+import { newUser } from "../../test-data/api-users.js";
 
 test("returns a list of users", async ({
   usersApi,
@@ -76,7 +78,7 @@ test.describe("Users API", () => {
       }>;
     };
   }) => {
-    const response = await usersApi.getUser(999);
+    const response = await usersApi.getUser(2);
 
     expect(response.status()).toBe(200);
     expect(response.ok()).toBeTruthy();
@@ -97,18 +99,8 @@ test.describe("Users API", () => {
     expect(response.headers()["content-type"]).toContain("application/json");
   });
 
-  test("returns 404 for a nonexistent user", async ({
-    request,
-  }: {
-    request: {
-      get(path: string): Promise<{
-        status(): number;
-        ok(): boolean;
-        json(): Promise<unknown>;
-      }>;
-    };
-  }) => {
-    const response = await request.get("/api/users/999");
+  test("returns 404 for a nonexistent user", async ({ usersApi }) => {
+    const response = await usersApi.getUser(999);
 
     expect(response.status()).toBe(404);
     expect(response.ok()).toBeFalsy();
@@ -175,16 +167,16 @@ test.describe("Users API", () => {
     expect(Number.isNaN(Date.parse(responseBody.updatedAt))).toBeFalsy();
   });
 
-    test("deletes an existing user", async ({
-      request,
-    }: {
-      request: {
-        delete(path: string): Promise<{
-          status(): number;
-          text(): Promise<string>;
-        }>;
-      };
-    }) => {
+  test("deletes an existing user", async ({
+    request,
+  }: {
+    request: {
+      delete(path: string): Promise<{
+        status(): number;
+        text(): Promise<string>;
+      }>;
+    };
+  }) => {
     const response = await request.delete("/api/users/2");
 
     expect(response.status()).toBe(204);
