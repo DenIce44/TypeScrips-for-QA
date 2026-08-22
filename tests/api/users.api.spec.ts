@@ -1,0 +1,128 @@
+import { test, expect } from "../../fixtures/api.fixture.js";
+
+import type {
+  CreateUserResponse,
+  User,
+  UsersResponse,
+} from "../../types/api.types.js";
+
+import { newUser } from "../../test-data/api-users.js";
+
+type UserResponse = {
+  data: User;
+};
+
+type UpdateUserResponse = {
+  name: string;
+  job: string;
+  updatedAt: string;
+};
+
+test.describe("Users API", () => {
+  test("returns a list of users", async ({ usersApi }) => {
+    const response = await usersApi.getUsers(2);
+
+    expect(response.status()).toBe(200);
+    expect(response.ok()).toBeTruthy();
+
+    const responseBody: UsersResponse = await response.json();
+
+    expect(responseBody.page).toBe(2);
+    expect(responseBody.data).not.toHaveLength(0);
+
+    for (const user of responseBody.data) {
+      expect(user).toMatchObject({
+        id: expect.any(Number),
+        email: expect.any(String),
+        first_name: expect.any(String),
+        last_name: expect.any(String),
+        avatar: expect.any(String),
+      });
+
+      expect(user.email).toContain("@");
+      expect(user.avatar).toMatch(/^https:\/\//);
+    }
+  });
+
+  test("returns a user by ID using API client", async ({ usersApi }) => {
+    const response = await usersApi.getUser(2);
+
+    expect(response.status()).toBe(200);
+
+    const responseBody: UserResponse = await response.json();
+
+    expect(responseBody.data.id).toBe(2);
+  });
+
+  test("returns complete user information", async ({ usersApi }) => {
+    const response = await usersApi.getUser(2);
+
+    expect(response.status()).toBe(200);
+    expect(response.ok()).toBeTruthy();
+
+    const responseBody: UserResponse = await response.json();
+
+    expect(responseBody.data).toMatchObject({
+      id: 2,
+      email: expect.any(String),
+      first_name: expect.any(String),
+      last_name: expect.any(String),
+      avatar: expect.any(String),
+    });
+
+    expect(responseBody.data.email).toContain("@");
+    expect(responseBody.data.avatar).toMatch(/^https:\/\//);
+    expect(response.headers()["content-type"]).toContain("application/json");
+  });
+
+  test("returns 404 for a nonexistent user", async ({ usersApi }) => {
+    const response = await usersApi.getUser(999);
+
+    expect(response.status()).toBe(404);
+    expect(response.ok()).toBeFalsy();
+
+    const responseBody: Record<string, never> = await response.json();
+
+    expect(responseBody).toEqual({});
+  });
+
+  test("creates a new user", async ({ usersApi }) => {
+    const response = await usersApi.createUser(newUser);
+
+    expect(response.status()).toBe(201);
+
+    const responseBody: CreateUserResponse = await response.json();
+
+    expect(responseBody.name).toBe(newUser.name);
+    expect(responseBody.job).toBe(newUser.job);
+    expect(responseBody.id).toEqual(expect.any(String));
+    expect(responseBody.createdAt).toEqual(expect.any(String));
+  });
+
+  test("updates an existing user", async ({ usersApi }) => {
+    const updatedUser = {
+      name: "Denis",
+      job: "Senior QA Engineer",
+    };
+
+    const response = await usersApi.updateUser(2, updatedUser);
+
+    expect(response.status()).toBe(200);
+
+    const responseBody: UpdateUserResponse = await response.json();
+
+    expect(responseBody).toMatchObject(updatedUser);
+    expect(responseBody.updatedAt).toEqual(expect.any(String));
+    expect(Number.isNaN(Date.parse(responseBody.updatedAt))).toBeFalsy();
+  });
+
+  test("deletes an existing user", async ({ usersApi }) => {
+    const response = await usersApi.deleteUser(2);
+
+    expect(response.status()).toBe(204);
+
+    const responseText = await response.text();
+
+    expect(responseText).toBe("");
+  });
+});

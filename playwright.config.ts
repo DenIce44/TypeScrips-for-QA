@@ -1,4 +1,7 @@
+import "dotenv/config";
 import { defineConfig, devices } from "@playwright/test";
+
+const reqresApiKey = process.env.REQRES_API_KEY ?? "";
 
 export default defineConfig({
   testDir: "./tests",
@@ -23,6 +26,7 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
+      testIgnore: "**/api/**/*.spec.ts",
       use: {
         ...devices["Desktop Chrome"],
       },
@@ -30,6 +34,7 @@ export default defineConfig({
 
     {
       name: "firefox",
+      testIgnore: "**/api/**/*.spec.ts",
       use: {
         ...devices["Desktop Firefox"],
       },
@@ -37,8 +42,23 @@ export default defineConfig({
 
     {
       name: "webkit",
+      testIgnore: "**/api/**/*.spec.ts",
       use: {
         ...devices["Desktop Safari"],
+      },
+    },
+
+    {
+      name: "api",
+      testMatch: "**/api/**/*.spec.ts",
+      use: {
+        baseURL: "https://reqres.in",
+        extraHTTPHeaders: {
+          Accept: "application/json",
+          "x-api-key": reqresApiKey,
+          "User-Agent": "playwright-api-tests/1.0",
+          "X-Reqres-Env": "prod",
+        },
       },
     },
   ],

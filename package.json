@@ -11,6 +11,7 @@
     "test:login": "playwright test tests/login.spec.ts --project=chromium",
     "test:products": "playwright test tests/products.spec.ts --project=chromium",
     "test:checkout": "playwright test tests/checkout.spec.ts --project=chromium",
+    "test:api": "playwright test --project=api",
     "test:debug": "playwright test --project=chromium --debug",
     "typecheck": "tsc --noEmit"
   },
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
+    "dotenv": "^17.4.2",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }
