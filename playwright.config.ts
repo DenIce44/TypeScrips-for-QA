@@ -1,4 +1,11 @@
+import "dotenv/config";
 import { defineConfig, devices } from "@playwright/test";
+
+const reqresApiKey = process.env.REQRES_API_KEY;
+
+if (!reqresApiKey) {
+  throw new Error("REQRES_API_KEY is not defined. Add it to the .env file.");
+}
 
 export default defineConfig({
   testDir: "./tests",
