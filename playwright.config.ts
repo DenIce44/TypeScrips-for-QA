@@ -14,13 +14,16 @@ export default defineConfig({
 
   ...(process.env.CI ? { workers: 1 } : {}),
 
-  reporter: "html",
+  reporter: process.env.CI
+    ? [["dot"], ["html", { open: "never" }]]
+    : [["list"], ["html", { open: "never" }]],
 
   use: {
     baseURL: "https://www.saucedemo.com",
     testIdAttribute: "data-test",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    video: process.env.CI ? "retain-on-failure" : "off",
   },
 
   projects: [
