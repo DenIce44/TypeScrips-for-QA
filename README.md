@@ -36,6 +36,9 @@
 - Проверки состояния интерфейса через web-first assertions
 - Диагностика падений через screenshot, video и trace
 - Отладка нестабильных UI-тестов
+- Сохранение авторизованного состояния через storageState
+- Setup-проект и зависимости между Playwright-проектами
+- Разделение авторизованных и неавторизованных UI-тестов
 
 ## Запуск примеров
 
@@ -101,19 +104,20 @@ npm run test:products
 
 Оформление заказа:
 
-````bash
-npm run test:checkout
-
-Debug Mode:
-
 ```bash
-npm run test:debug
-````
+npm run test:checkout
+```
 
 Проверки стабильности UI:
 
 ```bash
 npx playwright test tests/ui/stability.spec.ts --project=chromium
+```
+
+Debug Mode:
+
+```bash
+npm run test:debug
 ```
 
 ## Архитектура UI-тестов
@@ -140,7 +144,9 @@ trace — действия, DOM, сетевые запросы и ошибки.
 
 Локально trace можно открыть командой:
 
+```bash
 npx playwright show-trace путь/к/trace.zip
+```
 
 ## API-тесты
 
@@ -149,25 +155,25 @@ API-тесты выполняются на ReqRes:
 ```bash
 npm run test:api
 ```
-
-Для запуска необходимо создать `.env`:
-
-````env
-REQRES_API_KEY=your_api_key
-
-```
-Длинные end-to-end сценарии разделяются на бизнес-шаги с помощью `test.step()`, благодаря чему HTML-отчёт показывает точный этап выполнения или падения теста.
-
-## API-тесты
-
-API-тесты выполняются на ReqRes:
-
-```bash
-npm run test:api
-````
 
 Для запуска необходимо создать файл `.env`:
 
 ```env
 REQRES_API_KEY=your_api_key
 ```
+
+## Авторизованное состояние
+
+Файл `tests/auth.setup.ts` один раз выполняет вход стандартного пользователя и сохраняет cookies и localStorage в `playwright/.auth/user.json`.
+
+UI-проекты `chromium`, `firefox` и `webkit` зависят от setup-проекта и используют сохранённое состояние через `storageState`. Поэтому тесты каталога и checkout начинают работу как уже авторизованные и не повторяют вход в каждом `beforeEach`.
+
+Тесты страницы входа явно запускаются с пустым `storageState`, чтобы сохранённая сессия не влияла на позитивные и негативные проверки авторизации.
+
+Сгенерировать авторизованное состояние отдельно:
+
+```bash
+npm run test:auth
+```
+
+Каталог `playwright/.auth/` добавлен в `.gitignore`, потому что auth-файлы могут содержать конфиденциальные cookies и токены.

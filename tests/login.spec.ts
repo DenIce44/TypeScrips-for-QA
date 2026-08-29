@@ -1,6 +1,13 @@
 import { test, expect } from "../fixtures/app.fixture.js";
 import { invalidCredentials, users } from "../test-data/users.js";
 
+test.use({
+  storageState: {
+    cookies: [],
+    origins: [],
+  },
+});
+
 test.describe("Login", () => {
   test.beforeEach(async ({ loginPage }) => {
     await loginPage.open();

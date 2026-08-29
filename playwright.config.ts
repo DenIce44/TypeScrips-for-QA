@@ -28,26 +28,37 @@ export default defineConfig({
 
   projects: [
     {
+      name: "setup",
+      testMatch: "**/*.setup.ts",
+    },
+
+    {
       name: "chromium",
-      testIgnore: "**/api/**/*.spec.ts",
+      testIgnore: ["**/api/**/*.spec.ts", "**/*.setup.ts"],
+      dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
       },
     },
 
     {
       name: "firefox",
-      testIgnore: "**/api/**/*.spec.ts",
+      testIgnore: ["**/api/**/*.spec.ts", "**/*.setup.ts"],
+      dependencies: ["setup"],
       use: {
         ...devices["Desktop Firefox"],
+        storageState: "playwright/.auth/user.json",
       },
     },
 
     {
       name: "webkit",
-      testIgnore: "**/api/**/*.spec.ts",
+      testIgnore: ["**/api/**/*.spec.ts", "**/*.setup.ts"],
+      dependencies: ["setup"],
       use: {
         ...devices["Desktop Safari"],
+        storageState: "playwright/.auth/user.json",
       },
     },
 

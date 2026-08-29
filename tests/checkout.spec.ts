@@ -1,14 +1,9 @@
 import { test, expect } from "../fixtures/app.fixture.js";
 import { checkoutCustomer } from "../test-data/checkout.js";
-import { users } from "../test-data/users.js";
 
 test.describe("Checkout", () => {
-  test.beforeEach(async ({ page, loginPage }) => {
-    await loginPage.open();
-
-    await loginPage.login(users.standard.username, users.standard.password);
-
-    await expect(page).toHaveURL(/inventory\.html/);
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/inventory.html");
   });
 
   test("user can complete an order", async ({

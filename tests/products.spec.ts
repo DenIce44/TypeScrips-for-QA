@@ -1,13 +1,8 @@
 import { test, expect } from "../fixtures/app.fixture.js";
-import { users } from "../test-data/users.js";
 
 test.describe("Products", () => {
-  test.beforeEach(async ({ page, loginPage }) => {
-    await loginPage.open();
-
-    await loginPage.login(users.standard.username, users.standard.password);
-
-    await expect(page).toHaveURL(/inventory\.html/);
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/inventory.html");
   });
 
   test("products page displays the catalog", async ({ productsPage }) => {
