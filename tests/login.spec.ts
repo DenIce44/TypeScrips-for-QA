@@ -50,6 +50,13 @@ test.describe("Login", () => {
     );
   });
 
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [],
+    },
+  });
+
   for (const credentials of invalidCredentials) {
     test(`login fails with ${credentials.caseName}`, async ({
       page,

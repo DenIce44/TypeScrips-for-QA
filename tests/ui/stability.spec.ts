@@ -20,4 +20,11 @@ test.describe("UI stability checks", () => {
 
     await expect(productsPage.title).toHaveText("Products");
   });
+
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [],
+    },
+  });
 });
