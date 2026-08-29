@@ -105,8 +105,7 @@ npm run test:products
 Оформление заказа:
 
 ```bash
-npm run test:checkout;
-
+npm run test:checkout
 ```
 
 Проверки стабильности UI:
@@ -117,8 +116,9 @@ npx playwright test tests/ui/stability.spec.ts --project=chromium
 
 Debug Mode:
 
-````bash
+```bash
 npm run test:debug
+```
 
 ## Архитектура UI-тестов
 
@@ -128,7 +128,7 @@ fixtures/    — подготовка объектов для тестов
 pages/       — Page Objects
 test-data/   — тестовые данные
 tests/       — сценарии и assertions
-````
+```
 
 Page Objects содержат локаторы и пользовательские действия, а assertions остаются в тестовых сценариях.
 
@@ -144,7 +144,9 @@ trace — действия, DOM, сетевые запросы и ошибки.
 
 Локально trace можно открыть командой:
 
+```bash
 npx playwright show-trace путь/к/trace.zip
+```
 
 ## API-тесты
 
@@ -153,22 +155,6 @@ API-тесты выполняются на ReqRes:
 ```bash
 npm run test:api
 ```
-
-Для запуска необходимо создать `.env`:
-
-````env
-REQRES_API_KEY=your_api_key
-
-```
-Длинные end-to-end сценарии разделяются на бизнес-шаги с помощью `test.step()`, благодаря чему HTML-отчёт показывает точный этап выполнения или падения теста.
-
-## API-тесты
-
-API-тесты выполняются на ReqRes:
-
-```bash
-npm run test:api
-````
 
 Для запуска необходимо создать файл `.env`:
 
@@ -189,3 +175,5 @@ UI-проекты `chromium`, `firefox` и `webkit` зависят от setup-п
 ```bash
 npm run test:auth
 ```
+
+Каталог `playwright/.auth/` добавлен в `.gitignore`, потому что auth-файлы могут содержать конфиденциальные cookies и токены.

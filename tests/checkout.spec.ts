@@ -1,6 +1,5 @@
 import { test, expect } from "../fixtures/app.fixture.js";
 import { checkoutCustomer } from "../test-data/checkout.js";
-import { users } from "../test-data/users.js";
 
 test.describe("Checkout", () => {
   test.beforeEach(async ({ page }) => {

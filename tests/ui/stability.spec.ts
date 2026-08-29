@@ -1,5 +1,12 @@
 import { expect, test } from "../../fixtures/app.fixture.js";
 
+test.use({
+  storageState: {
+    cookies: [],
+    origins: [],
+  },
+});
+
 test.describe("UI stability checks", () => {
   test("shows an error for locked-out user", async ({ loginPage }) => {
     await loginPage.open();
@@ -19,12 +26,5 @@ test.describe("UI stability checks", () => {
     await loginPage.login("standard_user", "secret_sauce");
 
     await expect(productsPage.title).toHaveText("Products");
-  });
-
-  test.use({
-    storageState: {
-      cookies: [],
-      origins: [],
-    },
   });
 });
