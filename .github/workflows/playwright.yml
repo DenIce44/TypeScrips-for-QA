@@ -42,6 +42,12 @@ jobs:
       - name: Check TypeScript
         run: npm run typecheck
 
+      - name: Run smoke tests
+        run: npm run test:smoke
+
+      - name: Run all tests
+        run: npm test
+
       - name: Run UI and API tests
         run: npx playwright test --project=chromium --project=api
 
