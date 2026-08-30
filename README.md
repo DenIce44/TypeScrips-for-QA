@@ -39,6 +39,13 @@
 - Сохранение авторизованного состояния через storageState
 - Setup-проект и зависимости между Playwright-проектами
 - Разделение авторизованных и неавторизованных UI-тестов
+- классификация автотестов на smoke и regression;
+- позитивные и негативные тестовые сценарии;
+- теги Playwright;
+- фильтрация тестов через `--grep`;
+- предварительная проверка набора через `--list`;
+- комбинирование тегов и Playwright projects;
+- отдельный запуск smoke-тестов в GitHub Actions.
 
 ## Запуск примеров
 
@@ -80,6 +87,45 @@ UI Mode:
 
 ```bash
 npm run test:ui
+```
+
+## Commands for smoke, regression, etc.
+
+Run smoke tests
+
+```bash
+npm run test:smoke;
+```
+
+Run regression tests:
+
+```bash
+npm run test:regression
+```
+
+Run positive tests:
+
+```bash
+npm run test:positive
+```
+
+Run negative tests:
+
+```bash
+npm run test:negative
+```
+
+List all discovered tests:
+
+```bash
+npm run test:list
+
+```
+
+Run UI smoke tests in Chromium
+
+```bash
+npx playwright test --project=chromium --grep @smoke
 ```
 
 ## Учебное приложение
@@ -177,3 +223,28 @@ npm run test:auth
 ```
 
 Каталог `playwright/.auth/` добавлен в `.gitignore`, потому что auth-файлы могут содержать конфиденциальные cookies и токены.
+
+## Test tags
+
+Тесты классифицированы с помощью тегов Playwright:
+
+- `@smoke` — критические сценарии, подтверждающие основную работоспособность приложения;
+- `@regression` — расширенный набор проверок существующей функциональности;
+- `@positive` — сценарии с корректными данными и успешным результатом;
+- `@negative` — проверки ошибок, ограничений и невалидных данных.
+
+Один тест может относиться одновременно к нескольким категориям.
+
+Пример:
+
+```ts
+test(
+  "user can complete checkout",
+  {
+    tag: ["@smoke", "@positive"],
+  },
+  async ({ productsPage, cartPage }) => {
+    // Test steps
+  },
+);
+```

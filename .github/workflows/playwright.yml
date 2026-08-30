@@ -36,14 +36,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Chromium
-        run: npx playwright install chromium --with-deps
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
 
       - name: Check TypeScript
         run: npm run typecheck
 
-      - name: Run UI and API tests
-        run: npx playwright test --project=chromium --project=api
+      - name: Run smoke tests
+        run: npm run test:smoke
+
+      - name: Run all tests
+        run: npm test
 
       - name: Upload HTML report
         if: ${{ !cancelled() }}

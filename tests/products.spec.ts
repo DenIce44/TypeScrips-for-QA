@@ -11,52 +11,54 @@ test.describe("Products", () => {
     await expect(productsPage.title).toHaveText("Products");
   });
 
-  test("user can add Sauce Labs Backpack to the cart", async ({
-    page,
-    cartPage,
-    header,
-    productsPage,
-  }) => {
-    const productName = "Sauce Labs Backpack";
-    const backpack = productsPage.productByName(productName);
+  test(
+    "user can add Sauce Labs Backpack to the cart",
+    {
+      tag: ["@smoke", "@positive"],
+    },
+    async ({ page, cartPage, header, productsPage }) => {
+      const productName = "Sauce Labs Backpack";
+      const backpack = productsPage.productByName(productName);
 
-    await expect(backpack).toHaveCount(1);
+      await expect(backpack).toHaveCount(1);
 
-    await productsPage.addProductToCart(productName);
+      await productsPage.addProductToCart(productName);
 
-    await expect(header.cartBadge).toHaveText("1");
+      await expect(header.cartBadge).toHaveText("1");
 
-    await header.openCart();
+      await header.openCart();
 
-    await expect(page).toHaveURL(/cart\.html/);
+      await expect(page).toHaveURL(/cart\.html/);
 
-    await expect(cartPage.itemByName(productName)).toHaveCount(1);
-  });
+      await expect(cartPage.itemByName(productName)).toHaveCount(1);
+    },
+  );
 
-  test("cart is empty at the beginning of a new test", async ({
-    cartPage,
-    header,
-  }) => {
-    await header.openCart();
+  test(
+    "cart is empty at the beginning of a new test",
+    { tag: ["@regression", "@positive"] },
+    async ({ cartPage, header }) => {
+      await header.openCart();
 
-    await expect(cartPage.cartItems).toHaveCount(0);
-  });
+      await expect(cartPage.cartItems).toHaveCount(0);
+    },
+  );
 
-  test("user can remove a product from the cart", async ({
-    cartPage,
-    header,
-    productsPage,
-  }) => {
-    const productName = "Sauce Labs Backpack";
+  test(
+    "user can remove a product from the cart",
+    { tag: ["@regression", "@positive"] },
+    async ({ cartPage, header, productsPage }) => {
+      const productName = "Sauce Labs Backpack";
 
-    await productsPage.addProductToCart(productName);
-    await header.openCart();
+      await productsPage.addProductToCart(productName);
+      await header.openCart();
 
-    await expect(cartPage.itemByName(productName)).toHaveCount(1);
+      await expect(cartPage.itemByName(productName)).toHaveCount(1);
 
-    await cartPage.removeProduct(productName);
+      await cartPage.removeProduct(productName);
 
-    await expect(cartPage.itemByName(productName)).toHaveCount(0);
-    await expect(header.cartBadge).not.toBeVisible();
-  });
+      await expect(cartPage.itemByName(productName)).toHaveCount(0);
+      await expect(header.cartBadge).not.toBeVisible();
+    },
+  );
 });
